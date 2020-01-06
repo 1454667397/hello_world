@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+/* 方块的样式 */
+ .c{margin:1px; width:19px; height:19px; background:red; position:absolute;}
+/* 已固定的灰色方块 */
+ .d{margin:1px; width:19px; height:19px; background:gray; position:absolute;}
+ /* 游戏区域 */
+ .f{top:0px; left:0px; background:black; position:absolute;}
+ /* 游戏预告区域 */
+ .e{top:0px; background:#151515; position:absolute;}
+ /* 分数的样式 */
+ .g{width:100px; height:20px; color:white; position:absolute;}
+</style>
+<script src="js/tetris.js"></script>
+<script src="js/container.js"></script>
+<script>
+// 基本的参数设置
+var row =18; // 行数
+var col = 10;// 列数
+var announcement = 6;// 预告中的列数
+var size = 20;// 方块边的长度
+var isOver = false;//判断游戏结束的标志
+// 绘制出俄罗斯方块的七个模型
+// 以方块左下角的坐标为基准，4个方块组合
+// 每个数组值单号代表top值，双号代表left值代表一种方块形状
+// https://blog.csdn.net/d1105260363/article/details/77509119
+var shapes = ("0,1,1,1,2,1,3,1;1,0,1,1,1,2,2,2;2,0,2,1,2,2,1,2;0,1,1,1,1,2,2,2;1,2,2,2,2,1,3,1;1,1,2,1,1,2,2,2;0,2,1,2,1,1,2,2").split(";");
+
+function createElm(tag,css) {
+    // 创建元素，并传递CSS，添加到body中  返回值：元素
+    var elm = document.createElement(tag);
+    elm.className = css;
+    document.body.appendChild(elm);
+    return elm;
+}
+
+// 主程序
+function init() {
+    
+    // 创建一个container的类实例
+    container = new Container();
+    // 调用init()方法
+    container.init();
+
+    // 创建tetris的类实例
+    tetris = new Tetris();
+    // 调用tetris对象的container方法
+    tetris.container = container;
+
+    document.onkeydown = function (e) {
+        if (isOver) return;
+        // 主流浏览器中：事件对象可以在事件的回调函数中通过参数传入，常规写法是简写为e。
+        // 低版本IE浏览器中：事件对象通过window对象中获取，要取得事件对象，即window.event。
+        var e = window.event?window.event:e;
+        switch (e.keyCode) {
+            case 38: //up
+                tetris.rotate()
+                break;
+            case 40: //down
+                tetris.vMove(1)
+                break;
+            case 37: //left
+                tetris.hMove(-1)
+                break;
+            case 39: //right
+                tetris.hMove(1)
+                break;
+            default:
+                break;
+        }
+    }
+    setInterval(function () {if (!isOver) {tetris.vMove(1)}},500);
+}
+
+</script>
+<body onload="init()">
+</body>
+</html>
